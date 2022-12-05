@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct3D9;
 using Spline;
+using System.Collections.Generic;
 using System.IO;
 
 namespace TowerDefense
@@ -23,6 +24,16 @@ namespace TowerDefense
         Texture2D backgroundTexture;
         Texture2D ball;
 
+        //GameObject
+        List<GameObject> GameObjectList = new List<GameObject>();
+
+        //Tower
+        Tower tower;
+        Texture2D towerTex;
+
+        //Mouse & Keyboard
+        KeyboardState ks;
+        public static Point mousePos;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,6 +50,7 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
+            
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
             simplePath = new SimplePath(GraphicsDevice);
@@ -51,6 +63,7 @@ namespace TowerDefense
 
             ball = Content.Load<Texture2D>("ball");
             backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");
+            towerTex = Content.Load<Texture2D>("Tower");
 
             DrawOnRenderTarget();
 
@@ -69,13 +82,27 @@ namespace TowerDefense
             simplePath.SetPos(0, Vector2.Zero);
            
             simplePath.GetPos(simplePath.beginT);
+
+            //Tower
+            tower = new Tower(ball);
         }
 
         protected override void Update(GameTime gameTime)
         {
+            MouseState mouseState = Mouse.GetState();
+            mousePos = new Point(mouseState.X, mouseState.Y);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            tower.Update();
 
+            if(mouseState.LeftButton == ButtonState.Pressed && CanPlace(tower) == true)
+            {
+                GameObjectList.Add(tower);
+            }
+            foreach(GameObject go in GameObjectList)
+            {
+                go.placed = true;
+            }
             //förflyttar positionen längs kurvan
             texPos++; //bestämmer hastigheten
 
@@ -85,9 +112,8 @@ namespace TowerDefense
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-
-            spriteBatch.Draw(renderTarget, new Vector2(100,100), Color.White);
-            spriteBatch.Draw(ball, new Vector2(150,100), Color.White); 
+            
+            spriteBatch.Draw(renderTarget, new Rectangle(0,0, width, height), new Rectangle(0,0,width,height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
             simplePath.Draw(spriteBatch);
@@ -97,6 +123,12 @@ namespace TowerDefense
             if (texPos < simplePath.endT)
                 spriteBatch.Draw(ball, simplePath.GetPos(texPos), new Rectangle(0, 0, ball.Width, ball.Height),
                      Color.White, 0f, new Vector2(ball.Width / 2, ball.Height / 2), 1f, SpriteEffects.None, 0f);
+
+            foreach(GameObject obj in GameObjectList)
+            {
+                obj.Draw(spriteBatch);
+            }
+            tower.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -116,5 +148,20 @@ namespace TowerDefense
             //Sätt GraphicsDevice att åter igen peka på skärmen
             GraphicsDevice.SetRenderTarget(null);
         }
+
+        public bool CanPlace(GameObject g)
+        {
+            Color[] pixels = new Color[g.tex.Width * g.tex.Height];
+            Color[] pixels2 = new Color[g.tex.Width * g.tex.Height];
+            g.tex.GetData<Color>(pixels2);
+            renderTarget.GetData(0, g.hitBox, pixels, 0, pixels.Length);
+            for(int i = 0; i < pixels.Length; i++)
+            {
+                if(pixels[i].A > 0.0f && pixels2[i].A > 0.0f) { return false; }
+            }
+            return true;
+        }
+
+        
     }
 }
