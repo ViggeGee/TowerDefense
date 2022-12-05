@@ -98,6 +98,7 @@ namespace TowerDefense
             if(mouseState.LeftButton == ButtonState.Pressed && CanPlace(tower) == true)
             {
                 GameObjectList.Add(tower);
+                tower = new Tower(ball);
             }
             foreach(GameObject go in GameObjectList)
             {
@@ -115,8 +116,8 @@ namespace TowerDefense
             
             spriteBatch.Draw(renderTarget, new Rectangle(0,0, width, height), new Rectangle(0,0,width,height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            simplePath.Draw(spriteBatch);
+            GraphicsDevice.Clear(Color.White);
+            //simplePath.Draw(spriteBatch);
             simplePath.DrawPoints(spriteBatch);
 
             //ritar ut fienden på kurvan
