@@ -11,8 +11,8 @@ namespace TowerDefense
 {
     internal class Tower : GameObject
     {
-        
-        Vector2 pos;
+        bool shooting = false;
+        public Vector2 pos;
         public Tower(Texture2D tex) :base(tex)
         {
             this.tex = tex;

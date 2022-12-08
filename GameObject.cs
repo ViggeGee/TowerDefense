@@ -12,7 +12,7 @@ namespace TowerDefense
     {
         public bool placed = false;
         public Texture2D tex;
-        Vector2 pos;
+        public Vector2 pos;
         public Rectangle hitBox;
 
         public GameObject(Texture2D tex) { this.tex = tex; }

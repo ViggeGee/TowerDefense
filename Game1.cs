@@ -41,10 +41,16 @@ namespace TowerDefense
             IsMouseVisible = true;
         }
 
+        //Bullets
+        Bullet bullet;
+        List<Bullet> bulletList = new List<Bullet>();
+        int timer = 2;
+        double frameInterval = 550, frameTimer = 550;
+
+
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            renderTarget = new RenderTarget2D(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
             base.Initialize();
         }
 
@@ -60,6 +66,8 @@ namespace TowerDefense
             graphics.PreferredBackBufferHeight = height;
             graphics.PreferredBackBufferWidth = width;
             graphics.ApplyChanges();
+            
+            renderTarget = new RenderTarget2D(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
 
             ball = Content.Load<Texture2D>("ball");
             backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");
@@ -85,6 +93,10 @@ namespace TowerDefense
 
             //Tower
             tower = new Tower(ball);
+
+            //Bullet
+            //bullet = new Bullet(towerTex, new Vector2(0,0));
+            //bulletList.Add(bullet);
         }
 
         protected override void Update(GameTime gameTime)
@@ -99,11 +111,23 @@ namespace TowerDefense
             {
                 GameObjectList.Add(tower);
                 tower = new Tower(ball);
+
             }
-            foreach(GameObject go in GameObjectList)
+            foreach(Tower go in GameObjectList)
             {
                 go.placed = true;
+
+                frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (frameTimer <= 0)
+                {
+                    frameTimer = frameInterval;
+                    bulletList.Add(bullet = new Bullet(ball, go.pos));
+                }
             }
+                foreach(Bullet bullet in bulletList)
+                {
+                    bullet.Update();
+                }
             //förflyttar positionen längs kurvan
             texPos++; //bestämmer hastigheten
 
@@ -129,6 +153,10 @@ namespace TowerDefense
             {
                 obj.Draw(spriteBatch);
             }
+                foreach(Bullet bullet in bulletList)
+                {
+                    bullet.Draw(spriteBatch);
+                }
             tower.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
