@@ -15,14 +15,16 @@ namespace TowerDefense
         public Vector2 pos;
         public Rectangle hitBox;
 
+
         public GameObject(Texture2D tex) { this.tex = tex; }
-        public virtual void Update()
+        public virtual void Update(GameTime gameTime)
         {
+            
 
         }
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-
+      
         }
     }
 

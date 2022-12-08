@@ -11,7 +11,8 @@ namespace TowerDefense
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
+        private SpriteBatch spriteBatch, spriteBatch1;
+       
         SimplePath simplePath;
 
         int width = 850;
@@ -24,10 +25,9 @@ namespace TowerDefense
         Texture2D backgroundTexture;
         Texture2D ball;
 
-        //GameObject
-        List<GameObject> GameObjectList = new List<GameObject>();
 
         //Tower
+        List<Tower> TowerList = new List<Tower>();
         Tower tower;
         Texture2D towerTex;
 
@@ -42,10 +42,10 @@ namespace TowerDefense
         }
 
         //Bullets
-        Bullet bullet;
-        List<Bullet> bulletList = new List<Bullet>();
-        int timer = 2;
-        double frameInterval = 550, frameTimer = 550;
+        //Bullet bullet;
+        //List<Bullet> bulletList = new List<Bullet>();
+        //int timer = 2;
+        //double frameInterval = 550, frameTimer = 550;
 
 
         protected override void Initialize()
@@ -58,6 +58,7 @@ namespace TowerDefense
         {
             
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch1 = new SpriteBatch(GraphicsDevice);
             
             simplePath = new SimplePath(GraphicsDevice);
             simplePath.Clean(); // tar bort alla punkter
@@ -73,7 +74,6 @@ namespace TowerDefense
             backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");
             towerTex = Content.Load<Texture2D>("Tower");
 
-            DrawOnRenderTarget();
 
             simplePath.AddPoint(new Vector2(0,0));
             simplePath.AddPoint(new Vector2(100,100));
@@ -90,10 +90,6 @@ namespace TowerDefense
             simplePath.SetPos(0, Vector2.Zero);
            
             simplePath.GetPos(simplePath.beginT);
-
-            //Tower
-            tower = new Tower(ball);
-
             //Bullet
             //bullet = new Bullet(towerTex, new Vector2(0,0));
             //bulletList.Add(bullet);
@@ -105,29 +101,34 @@ namespace TowerDefense
             mousePos = new Point(mouseState.X, mouseState.Y);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            tower.Update();
-
-            if(mouseState.LeftButton == ButtonState.Pressed && CanPlace(tower) == true)
+            foreach(Tower go in TowerList)
             {
-                GameObjectList.Add(tower);
-                tower = new Tower(ball);
+                go.Update(gameTime);
+            }
+            if(mouseState.LeftButton == ButtonState.Pressed)
+            {
+                tower = new Tower(ball, new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, ball.Width, ball.Height));
+                if(CanPlace(tower))
+                {
+                TowerList.Add(tower);
+                }
 
             }
-            foreach(Tower go in GameObjectList)
+            foreach(Tower go in TowerList)
             {
                 go.placed = true;
 
-                frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
-                if (frameTimer <= 0)
-                {
-                    frameTimer = frameInterval;
-                    bulletList.Add(bullet = new Bullet(ball, go.pos));
-                }
+                //frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                //if (frameTimer <= 0)
+                //{
+                //    frameTimer = frameInterval;
+                //    bulletList.Add(bullet = new Bullet(ball, go.pos));
+                //}
             }
-                foreach(Bullet bullet in bulletList)
-                {
-                    bullet.Update();
-                }
+                //foreach(Bullet bullet in bulletList)
+                //{
+                //    bullet.Update();
+                //}
             //förflyttar positionen längs kurvan
             texPos++; //bestämmer hastigheten
 
@@ -137,7 +138,9 @@ namespace TowerDefense
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            
+            DrawOnRenderTarget();
+
+
             spriteBatch.Draw(renderTarget, new Rectangle(0,0, width, height), new Rectangle(0,0,width,height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
 
             GraphicsDevice.Clear(Color.White);
@@ -149,15 +152,14 @@ namespace TowerDefense
                 spriteBatch.Draw(ball, simplePath.GetPos(texPos), new Rectangle(0, 0, ball.Width, ball.Height),
                      Color.White, 0f, new Vector2(ball.Width / 2, ball.Height / 2), 1f, SpriteEffects.None, 0f);
 
-            foreach(GameObject obj in GameObjectList)
+            foreach(Tower obj in TowerList)
             {
                 obj.Draw(spriteBatch);
             }
-                foreach(Bullet bullet in bulletList)
-                {
-                    bullet.Draw(spriteBatch);
-                }
-            tower.Draw(spriteBatch);
+                //foreach(Bullet bullet in bulletList)
+                //{
+                //    bullet.Draw(spriteBatch);
+                //}
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -167,24 +169,28 @@ namespace TowerDefense
             //Ändra så att GraphicsDevice ritar mot vårt render target
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin();
-
+            spriteBatch1.Begin();
+            foreach (Tower obj in TowerList)
+            {
+                obj.Draw(spriteBatch1);
+            }
             //Rita ut texturen. Den ritas nu ut till vårt render target istället
             //för på skärmen.
-            spriteBatch.Draw(backgroundTexture, Vector2.Zero, Color.White);
-            spriteBatch.End();
+            spriteBatch1.Draw(backgroundTexture, Vector2.Zero, Color.White);
+            spriteBatch1.End();
 
             //Sätt GraphicsDevice att åter igen peka på skärmen
             GraphicsDevice.SetRenderTarget(null);
         }
 
-        public bool CanPlace(GameObject g)
+        public bool CanPlace(Tower g)
         {
             Color[] pixels = new Color[g.tex.Width * g.tex.Height];
             Color[] pixels2 = new Color[g.tex.Width * g.tex.Height];
             g.tex.GetData<Color>(pixels2);
             renderTarget.GetData(0, g.hitBox, pixels, 0, pixels.Length);
-            for(int i = 0; i < pixels.Length; i++)
+            
+            for (int i = 0; i < pixels.Length; i++)
             {
                 if(pixels[i].A > 0.0f && pixels2[i].A > 0.0f) { return false; }
             }
