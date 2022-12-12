@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,46 +9,31 @@ using System.Threading.Tasks;
 
 namespace TowerDefense
 {
-    internal class Bullet : Tower
+    public class Bullet : Tower
 
     {
-
+        public Rectangle hitBox2;
         Vector2 direction;
         Vector2 speed = new Vector2(1, 0);
 
-
-        public Bullet(Texture2D tex, Vector2 pos, Rectangle hitBox) : base(tex, pos, hitBox)
+        public Bullet(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath, float enemyPos) : base(tex, pos, hitBox, simplePath, enemyPos)
         {
             this.pos = pos;
+            
+            hitBox2 = new Rectangle((int)pos.X, (int)pos.Y, 5, 5);
         }
 
         public void Update()
         {
-            GetDirection(new Vector2(50, 100));
+            hitBox.Location = pos.ToPoint();
             direction = Vector2.Normalize(direction);
-            pos += direction;
-            
-
-            //if (pos.X > direction.X)
-            //{
-            //    pos.X -= 1;
-            //}
-            //else
-            //{
-            //    pos.X += 1;
-            //}
-            //if (pos.Y > direction.Y)
-            //{
-            //    pos.Y -= 1;
-            //}
-            //else { pos.Y += 1; }
-
-
+            pos += direction * 2;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, pos, null, Color.Red, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
+            //spriteBatch.Draw(tex, pos, null, Color.Blue, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
+            spriteBatch.Draw(tex, hitBox2, hitBox2, Color.Yellow);
         }
 
         public Vector2 GetDirection(Vector2 targetPos)

@@ -24,7 +24,11 @@ namespace TowerDefense
 
         Texture2D backgroundTexture;
         Texture2D ball;
-
+        //Enemy
+        Enemy enemy;
+        List<Enemy>enemyList = new List<Enemy>();
+        double timer = 0;
+        double timerInterval = 2;
 
         //Tower
         List<Tower> TowerList = new List<Tower>();
@@ -107,31 +111,42 @@ namespace TowerDefense
             }
             if(mouseState.LeftButton == ButtonState.Pressed)
             {
-                tower = new Tower(ball, new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, ball.Width, ball.Height));
+                tower = new Tower(ball, new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, ball.Width, ball.Height), simplePath, texPos);
                 if(CanPlace(tower))
                 {
                 TowerList.Add(tower);
                 }
 
             }
-            foreach(Tower go in TowerList)
+            foreach (Tower go in TowerList)
             {
                 go.placed = true;
-
-                //frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
-                //if (frameTimer <= 0)
-                //{
-                //    frameTimer = frameInterval;
-                //    bulletList.Add(bullet = new Bullet(ball, go.pos));
-                //}
+                foreach (Enemy enemy in enemyList)
+                {
+                    foreach (Bullet bullet in go.bulletList)
+                    {
+                        if (bullet.hitBox2.Intersects(enemy.hitBox))
+                        {
+                            enemy.alive = false;
+                        }
+                    }
+                }
             }
-                //foreach(Bullet bullet in bulletList)
-                //{
-                //    bullet.Update();
-                //}
-            //förflyttar positionen längs kurvan
+
             texPos++; //bestämmer hastigheten
 
+            //EnemySpawner
+            timer -= gameTime.ElapsedGameTime.TotalSeconds;
+            if (timer <= 0)
+            {
+                enemyList.Add(new Enemy(ball, simplePath));
+                timer = timerInterval;
+            }
+
+            foreach(Enemy enemy in enemyList)
+            {
+                enemy.Update();
+            }
             base.Update(gameTime);
         }
 
@@ -147,10 +162,17 @@ namespace TowerDefense
             //simplePath.Draw(spriteBatch);
             simplePath.DrawPoints(spriteBatch);
 
+
+            foreach(Enemy enemy in enemyList)
+            {
+                enemy.Draw(spriteBatch); 
+            }
             //ritar ut fienden på kurvan
-            if (texPos < simplePath.endT)
-                spriteBatch.Draw(ball, simplePath.GetPos(texPos), new Rectangle(0, 0, ball.Width, ball.Height),
-                     Color.White, 0f, new Vector2(ball.Width / 2, ball.Height / 2), 1f, SpriteEffects.None, 0f);
+            //if (texPos < simplePath.endT)
+            //    spriteBatch.Draw(ball, simplePath.GetPos(texPos), new Rectangle(0, 0, ball.Width, ball.Height),
+            //         Color.White, 0f, new Vector2(ball.Width / 2, ball.Height / 2), 1f, SpriteEffects.None, 0f);
+
+
 
             foreach(Tower obj in TowerList)
             {
@@ -196,6 +218,8 @@ namespace TowerDefense
             }
             return true;
         }
+
+        
 
         
     }

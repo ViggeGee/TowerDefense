@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Spline;
 
 namespace TowerDefense
 {
@@ -13,20 +14,27 @@ namespace TowerDefense
     {
         bool shooting = false;
         public Vector2 pos;
-
-        Bullet bullet;
-        List<Bullet> bulletList = new List<Bullet>();
+        float enemyPos;
+        SimplePath simplePath;
+        public Bullet bullet;
+        public List<Bullet> bulletList = new List<Bullet>();
 
         double frameInterval = 550, frameTimer = 550;
-        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox) : base(tex)
+        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath, float enemyPos) : base(tex)
         {
             this.tex = tex;
             this.pos = pos;
             this.hitBox = hitBox;
+            this.enemyPos = enemyPos;
+            this.simplePath = simplePath;
         }
 
         public override void Update(GameTime gameTime)
         {
+            enemyPos++;
+            
+            
+
             hitBox = new Rectangle((int)pos.X, (int)pos.Y, tex.Width, tex.Height);
             if (!placed)
             {
@@ -37,10 +45,11 @@ namespace TowerDefense
             if (frameTimer <= 0)
             {
                 frameTimer = frameInterval;
-                bulletList.Add(bullet = new Bullet(tex, pos, hitBox));
+                bulletList.Add(bullet = new Bullet(tex, pos, hitBox, simplePath, enemyPos));
             }
             foreach (Bullet bullet in bulletList)
             {
+                bullet.GetDirection(simplePath.GetPos(enemyPos));
                 bullet.Update();
             }
         }
