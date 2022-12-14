@@ -32,8 +32,6 @@ namespace TowerDefense
         public override void Update(GameTime gameTime)
         {
             enemyPos++;
-            
-            
 
             hitBox = new Rectangle((int)pos.X, (int)pos.Y, tex.Width, tex.Height);
             if (!placed)

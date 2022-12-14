@@ -15,7 +15,7 @@ namespace TowerDefense
         Vector2 pos;
         float floatPos;
         SimplePath simplePath;
-        Rectangle hitBox;
+        public Rectangle hitBox2;
         public bool alive = true;
 
         double timer = 5;
@@ -25,7 +25,7 @@ namespace TowerDefense
         {
             this.tex = tex;
             this.simplePath = simplePath;
-            hitBox = new Rectangle(0, 0, tex.Width, tex.Height);
+            hitBox2 = new Rectangle(0, 0, tex.Width, tex.Height);
         }
 
         public void Update()
@@ -34,7 +34,7 @@ namespace TowerDefense
             {
 
 
-                hitBox.Location = pos.ToPoint();
+                hitBox2.Location = pos.ToPoint();
                 floatPos++;
                 pos = simplePath.GetPos(floatPos);
             }
@@ -44,7 +44,7 @@ namespace TowerDefense
         {
             if (alive)
             {
-                spriteBatch.Draw(tex, pos, Color.Red);
+                spriteBatch.Draw(tex, hitBox2, Color.Red);
             }
         }
 

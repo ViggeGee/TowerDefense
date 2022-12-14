@@ -25,15 +25,15 @@ namespace TowerDefense
 
         public void Update()
         {
-            hitBox.Location = pos.ToPoint();
             direction = Vector2.Normalize(direction);
             pos += direction * 2;
+            hitBox2.Location = pos.ToPoint();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            //spriteBatch.Draw(tex, pos, null, Color.Blue, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
-            spriteBatch.Draw(tex, hitBox2, hitBox2, Color.Yellow);
+            spriteBatch.Draw(tex, pos, null, Color.Blue, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
+            //spriteBatch.Draw(tex, hitBox2, null, Color.Yellow);
         }
 
         public Vector2 GetDirection(Vector2 targetPos)

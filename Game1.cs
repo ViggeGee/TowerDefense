@@ -125,7 +125,7 @@ namespace TowerDefense
                 {
                     foreach (Bullet bullet in go.bulletList)
                     {
-                        if (bullet.hitBox2.Intersects(enemy.hitBox))
+                        if (bullet.hitBox2.Intersects(enemy.hitBox2))
                         {
                             enemy.alive = false;
                         }
@@ -178,10 +178,10 @@ namespace TowerDefense
             {
                 obj.Draw(spriteBatch);
             }
-                //foreach(Bullet bullet in bulletList)
-                //{
-                //    bullet.Draw(spriteBatch);
-                //}
+            //foreach (Bullet bullet in bulletList)
+            //{
+            //    bullet.Draw(spriteBatch);
+            //}
             spriteBatch.End();
             base.Draw(gameTime);
         }
