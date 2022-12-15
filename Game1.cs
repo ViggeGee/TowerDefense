@@ -13,6 +13,8 @@ namespace TowerDefense
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch, spriteBatch1;
 
+        //Level
+        LevelManager levelManager;
         SimplePath simplePath;
 
         int width = 850;
@@ -23,6 +25,12 @@ namespace TowerDefense
 
         Texture2D backgroundTexture;
         Texture2D ball;
+
+        //Particles
+        ParticleSystem particleSystem;
+        List<Texture2D> textures = new List<Texture2D>();
+
+
         //Enemy
         Enemy enemy;
         public List<Enemy> enemyList = new List<Enemy>();
@@ -45,16 +53,8 @@ namespace TowerDefense
             IsMouseVisible = true;
         }
 
-        //Bullets
-        //Bullet bullet;
-        //List<Bullet> bulletList = new List<Bullet>();
-        //int timer = 2;
-        //double frameInterval = 550, frameTimer = 550;
-
-
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             base.Initialize();
         }
 
@@ -65,44 +65,34 @@ namespace TowerDefense
             spriteBatch1 = new SpriteBatch(GraphicsDevice);
 
             simplePath = new SimplePath(GraphicsDevice);
-            simplePath.Clean(); // tar bort alla punkter
-                                //simplePath.generateDefaultPath();
-
+            levelManager = new LevelManager(simplePath);
+            levelManager.Load();
             graphics.PreferredBackBufferHeight = height;
             graphics.PreferredBackBufferWidth = width;
             graphics.ApplyChanges();
 
             renderTarget = new RenderTarget2D(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
 
+
+            textures.Add(Content.Load<Texture2D>("circle"));
+            textures.Add(Content.Load<Texture2D>("star"));
+            textures.Add(Content.Load<Texture2D>("diamond"));
+            particleSystem = new ParticleSystem(textures, new Vector2(400, 240));
             ball = Content.Load<Texture2D>("ball");
             backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");
             towerTex = Content.Load<Texture2D>("Tower");
 
-
-            simplePath.AddPoint(new Vector2(0, 0));
-            simplePath.AddPoint(new Vector2(100, 100));
-            simplePath.AddPoint(new Vector2(100, 200));
-            simplePath.AddPoint(new Vector2(300, 200));
-            simplePath.AddPoint(new Vector2(400, 100));
-            simplePath.AddPoint(new Vector2(500, 400));
-            simplePath.AddPoint(new Vector2(600, 200));
-            simplePath.AddPoint(new Vector2(700, 300));
-            simplePath.AddPoint(new Vector2(850, 650));
-
-            //sätter bildens startpunkt till början av kurvan
             enemyPosF = simplePath.beginT;
-            simplePath.SetPos(0, Vector2.Zero);
 
             simplePath.GetPos(simplePath.beginT);
-            //Bullet
-            //bullet = new Bullet(towerTex, new Vector2(0,0));
-            //bulletList.Add(bullet);
         }
 
         protected override void Update(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
             mousePos = new Point(mouseState.X, mouseState.Y);
+            particleSystem.EmitterLocation =  new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            particleSystem.Update();
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             //EnemySpawner
@@ -152,23 +142,17 @@ namespace TowerDefense
         {
             spriteBatch.Begin();
             DrawOnRenderTarget();
-
+            particleSystem.Draw(spriteBatch);
 
             spriteBatch.Draw(renderTarget, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
 
             GraphicsDevice.Clear(Color.White);
-            //simplePath.Draw(spriteBatch);
-            simplePath.DrawPoints(spriteBatch);
-
+            levelManager.Draw(spriteBatch);
 
             foreach (Enemy enemy in enemyList)
             {
                 enemy.Draw(spriteBatch);
             }
-            //ritar ut fienden på kurvan
-            //if (texPos < simplePath.endT)
-            //    spriteBatch.Draw(ball, simplePath.GetPos(texPos), new Rectangle(0, 0, ball.Width, ball.Height),
-            //         Color.White, 0f, new Vector2(ball.Width / 2, ball.Height / 2), 1f, SpriteEffects.None, 0f);
 
 
 
@@ -176,17 +160,13 @@ namespace TowerDefense
             {
                 obj.Draw(spriteBatch);
             }
-            //foreach (Bullet bullet in bulletList)
-            //{
-            //    bullet.Draw(spriteBatch);
-            //}
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
 
         public void DrawOnRenderTarget()
         {
-            //Ändra så att GraphicsDevice ritar mot vårt render target
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.Transparent);
             spriteBatch1.Begin();
@@ -194,12 +174,12 @@ namespace TowerDefense
             {
                 obj.Draw(spriteBatch1);
             }
-            //Rita ut texturen. Den ritas nu ut till vårt render target istället
-            //för på skärmen.
+            
+
             spriteBatch1.Draw(backgroundTexture, Vector2.Zero, Color.White);
             spriteBatch1.End();
 
-            //Sätt GraphicsDevice att åter igen peka på skärmen
+
             GraphicsDevice.SetRenderTarget(null);
         }
 

@@ -20,7 +20,7 @@ namespace TowerDefense
         public Bullet bullet;
         public List<Bullet> bulletList = new List<Bullet>();
 
-        double frameInterval = 550, frameTimer = 550;
+        double frameTimer, frameInterval = 2000;
         public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath) : base(tex)
         {
             this.tex = tex;
@@ -53,13 +53,16 @@ namespace TowerDefense
         {
             if (placed)
             {
+                if(towerEnemyList.Count != 0)
                 enemyPos = towerEnemyList.First().GetFloatPos();
+
                 foreach (Enemy enemy in towerEnemyList)
                 {
                     foreach (Bullet bullet in bulletList)
                     {
                         if (bullet.hitBox2.Intersects(enemy.hitBox2) && bullet.alive)
                         {
+
                             enemy.alive = false;
                             bullet.alive = false;
                         }

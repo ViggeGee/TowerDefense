@@ -25,12 +25,17 @@ namespace TowerDefense
 
         public void Update()
         {
-            if (alive)
+            if (!alive)
             {
+                return;
+            }
                 hitBox2.Location = pos.ToPoint();
                 floatPos++;
                 pos = simplePath.GetPos(floatPos);
-            }
+
+            if(floatPos >= simplePath.endT)
+                alive = false;
+
         }
 
         public void Draw(SpriteBatch spriteBatch)

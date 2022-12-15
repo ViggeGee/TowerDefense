@@ -14,10 +14,10 @@ namespace TowerDefense
     {
         public Rectangle hitBox2;
         Vector2 direction;
-        Vector2 speed = new Vector2(1, 0);
         public bool alive = true;
         Vector2 enemyPosV;
         float enemyPos;
+        Vector2 speed = new Vector2(3, 3);
         public Bullet(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath, float enemyPos) : base(tex, pos, hitBox, simplePath)
         {
             this.pos = pos;
@@ -30,7 +30,7 @@ namespace TowerDefense
             if (!alive) 
                 return;
 
-            if(Vector2.Distance(pos, enemyPosV) <= 1)
+            if(Vector2.Distance(pos, enemyPosV) <= 3)
             {
                 alive = false;
             }
@@ -41,7 +41,7 @@ namespace TowerDefense
                 alive = false;
             }
             direction = Vector2.Normalize(direction);
-            pos += direction;
+            pos += direction * speed;
             hitBox2.Location = pos.ToPoint();
 
         }
@@ -52,7 +52,6 @@ namespace TowerDefense
             {
                 spriteBatch.Draw(tex, pos, null, Color.Blue, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
             }
-            //spriteBatch.Draw(tex, hitBox2, null, Color.Yellow);
         }
     }
 }
