@@ -12,44 +12,32 @@ namespace TowerDefense
 {
     public class Tower : GameObject
     {
+        List<Enemy> towerEnemyList = new List<Enemy>();
         bool shooting = false;
         public Vector2 pos;
-        float enemyPos;
-        SimplePath simplePath;
+        public float enemyPos;
+        public SimplePath simplePath;
         public Bullet bullet;
         public List<Bullet> bulletList = new List<Bullet>();
 
         double frameInterval = 550, frameTimer = 550;
-        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath, float enemyPos) : base(tex)
+        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath) : base(tex)
         {
             this.tex = tex;
             this.pos = pos;
             this.hitBox = hitBox;
-            this.enemyPos = enemyPos;
             this.simplePath = simplePath;
         }
 
         public override void Update(GameTime gameTime)
         {
-            enemyPos++;
-
             hitBox = new Rectangle((int)pos.X, (int)pos.Y, tex.Width, tex.Height);
             if (!placed)
             {
-            pos = Game1.mousePos.ToVector2();
+                pos = Game1.mousePos.ToVector2();
             }
-
-            frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (frameTimer <= 0)
-            {
-                frameTimer = frameInterval;
-                bulletList.Add(bullet = new Bullet(tex, pos, hitBox, simplePath, enemyPos));
-            }
-            foreach (Bullet bullet in bulletList)
-            {
-                bullet.GetDirection(simplePath.GetPos(enemyPos));
-                bullet.Update();
-            }
+            Shooter(gameTime);
+            
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -61,9 +49,39 @@ namespace TowerDefense
             }
         }
 
-        public Vector2 GetEnemyPos(Vector2 enemyPos)
+        public void Shooter(GameTime gameTime)
         {
-            return enemyPos;
+            if (placed)
+            {
+                enemyPos = towerEnemyList.First().GetFloatPos();
+                foreach (Enemy enemy in towerEnemyList)
+                {
+                    foreach (Bullet bullet in bulletList)
+                    {
+                        if (bullet.hitBox2.Intersects(enemy.hitBox2) && bullet.alive)
+                        {
+                            enemy.alive = false;
+                            bullet.alive = false;
+                        }
+                    }
+                }
+            }
+
+            frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            foreach (Bullet bullet in bulletList)
+            {
+                bullet.Update();
+            }
+            if (frameTimer <= 0)
+            {
+                frameTimer = frameInterval;
+                bulletList.Add(bullet = new Bullet(tex, pos, hitBox, simplePath, enemyPos));
+            }
+        }
+
+        public void GetList(List<Enemy> tempList)
+        {
+            towerEnemyList = tempList;
         }
     }
 }

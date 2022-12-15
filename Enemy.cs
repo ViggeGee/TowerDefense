@@ -9,17 +9,12 @@ using Spline;
 
 namespace TowerDefense
 {
-    internal class Enemy : GameObject
+    public class Enemy : GameObject
     {
-        Texture2D tex;
-        Vector2 pos;
         float floatPos;
         SimplePath simplePath;
         public Rectangle hitBox2;
         public bool alive = true;
-
-        double timer = 5;
-        double timerInterval = 5;
 
         public Enemy(Texture2D tex, SimplePath simplePath) : base(tex)
         {
@@ -32,8 +27,6 @@ namespace TowerDefense
         {
             if (alive)
             {
-
-
                 hitBox2.Location = pos.ToPoint();
                 floatPos++;
                 pos = simplePath.GetPos(floatPos);
@@ -47,14 +40,9 @@ namespace TowerDefense
                 spriteBatch.Draw(tex, hitBox2, Color.Red);
             }
         }
-
-        public void EnemySpawner(GameTime gameTime)
+        public float GetFloatPos()
         {
-            timer -= gameTime.ElapsedGameTime.TotalSeconds;
-            if (timer <= 0)
-            {
-
-            }
+            return floatPos;
         }
     }
 }

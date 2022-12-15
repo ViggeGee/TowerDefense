@@ -12,13 +12,12 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch, spriteBatch1;
-       
+
         SimplePath simplePath;
 
         int width = 850;
         int height = 650;
 
-        float texPos;
 
         RenderTarget2D renderTarget;
 
@@ -26,9 +25,10 @@ namespace TowerDefense
         Texture2D ball;
         //Enemy
         Enemy enemy;
-        List<Enemy>enemyList = new List<Enemy>();
+        public List<Enemy> enemyList = new List<Enemy>();
         double timer = 0;
         double timerInterval = 2;
+        float enemyPosF;
 
         //Tower
         List<Tower> TowerList = new List<Tower>();
@@ -60,18 +60,18 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
-            
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch1 = new SpriteBatch(GraphicsDevice);
-            
+
             simplePath = new SimplePath(GraphicsDevice);
             simplePath.Clean(); // tar bort alla punkter
-            //simplePath.generateDefaultPath();
-            
+                                //simplePath.generateDefaultPath();
+
             graphics.PreferredBackBufferHeight = height;
             graphics.PreferredBackBufferWidth = width;
             graphics.ApplyChanges();
-            
+
             renderTarget = new RenderTarget2D(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
 
             ball = Content.Load<Texture2D>("ball");
@@ -79,20 +79,20 @@ namespace TowerDefense
             towerTex = Content.Load<Texture2D>("Tower");
 
 
-            simplePath.AddPoint(new Vector2(0,0));
-            simplePath.AddPoint(new Vector2(100,100));
-            simplePath.AddPoint(new Vector2(100,200));
-            simplePath.AddPoint(new Vector2(300,200));
+            simplePath.AddPoint(new Vector2(0, 0));
+            simplePath.AddPoint(new Vector2(100, 100));
+            simplePath.AddPoint(new Vector2(100, 200));
+            simplePath.AddPoint(new Vector2(300, 200));
             simplePath.AddPoint(new Vector2(400, 100));
-            simplePath.AddPoint(new Vector2(500,400));
+            simplePath.AddPoint(new Vector2(500, 400));
             simplePath.AddPoint(new Vector2(600, 200));
-            simplePath.AddPoint(new Vector2(700,300));
+            simplePath.AddPoint(new Vector2(700, 300));
             simplePath.AddPoint(new Vector2(850, 650));
-            
+
             //sätter bildens startpunkt till början av kurvan
-            texPos = simplePath.beginT;
+            enemyPosF = simplePath.beginT;
             simplePath.SetPos(0, Vector2.Zero);
-           
+
             simplePath.GetPos(simplePath.beginT);
             //Bullet
             //bullet = new Bullet(towerTex, new Vector2(0,0));
@@ -105,36 +105,6 @@ namespace TowerDefense
             mousePos = new Point(mouseState.X, mouseState.Y);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            foreach(Tower go in TowerList)
-            {
-                go.Update(gameTime);
-            }
-            if(mouseState.LeftButton == ButtonState.Pressed)
-            {
-                tower = new Tower(ball, new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, ball.Width, ball.Height), simplePath, texPos);
-                if(CanPlace(tower))
-                {
-                TowerList.Add(tower);
-                }
-
-            }
-            foreach (Tower go in TowerList)
-            {
-                go.placed = true;
-                foreach (Enemy enemy in enemyList)
-                {
-                    foreach (Bullet bullet in go.bulletList)
-                    {
-                        if (bullet.hitBox2.Intersects(enemy.hitBox2))
-                        {
-                            enemy.alive = false;
-                        }
-                    }
-                }
-            }
-
-            texPos++; //bestämmer hastigheten
-
             //EnemySpawner
             timer -= gameTime.ElapsedGameTime.TotalSeconds;
             if (timer <= 0)
@@ -143,10 +113,38 @@ namespace TowerDefense
                 timer = timerInterval;
             }
 
-            foreach(Enemy enemy in enemyList)
+            foreach (Enemy enemy in enemyList)
             {
                 enemy.Update();
+
             }
+
+            //TowerPlacer
+            foreach (Tower go in TowerList)
+            {
+                go.Update(gameTime);
+            }
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                tower = new Tower(ball, new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, ball.Width, ball.Height), simplePath);
+                if (CanPlace(tower))
+                {
+                    TowerList.Add(tower);
+                }
+
+            }
+            foreach (Tower go in TowerList)
+            {
+                go.placed = true;
+            }
+
+            //Shooter
+            enemyList.RemoveAll(x => x.alive == false);
+            foreach(Tower tower in TowerList)
+            {
+                tower.GetList(enemyList);
+            }
+
             base.Update(gameTime);
         }
 
@@ -156,16 +154,16 @@ namespace TowerDefense
             DrawOnRenderTarget();
 
 
-            spriteBatch.Draw(renderTarget, new Rectangle(0,0, width, height), new Rectangle(0,0,width,height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
+            spriteBatch.Draw(renderTarget, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
 
             GraphicsDevice.Clear(Color.White);
             //simplePath.Draw(spriteBatch);
             simplePath.DrawPoints(spriteBatch);
 
 
-            foreach(Enemy enemy in enemyList)
+            foreach (Enemy enemy in enemyList)
             {
-                enemy.Draw(spriteBatch); 
+                enemy.Draw(spriteBatch);
             }
             //ritar ut fienden på kurvan
             //if (texPos < simplePath.endT)
@@ -174,7 +172,7 @@ namespace TowerDefense
 
 
 
-            foreach(Tower obj in TowerList)
+            foreach (Tower obj in TowerList)
             {
                 obj.Draw(spriteBatch);
             }
@@ -211,16 +209,12 @@ namespace TowerDefense
             Color[] pixels2 = new Color[g.tex.Width * g.tex.Height];
             g.tex.GetData<Color>(pixels2);
             renderTarget.GetData(0, g.hitBox, pixels, 0, pixels.Length);
-            
+
             for (int i = 0; i < pixels.Length; i++)
             {
-                if(pixels[i].A > 0.0f && pixels2[i].A > 0.0f) { return false; }
+                if (pixels[i].A > 0.0f && pixels2[i].A > 0.0f) { return false; }
             }
             return true;
         }
-
-        
-
-        
     }
 }
