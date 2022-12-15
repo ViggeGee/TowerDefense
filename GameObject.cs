@@ -11,12 +11,11 @@ namespace TowerDefense
     public class GameObject
     {
         public bool placed = false;
-        public Texture2D tex;
         public Vector2 pos;
         public Rectangle hitBox;
 
 
-        public GameObject(Texture2D tex) { this.tex = tex; }
+        public GameObject() { }
         public virtual void Update(GameTime gameTime)
         {
             

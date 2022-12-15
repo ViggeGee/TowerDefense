@@ -19,11 +19,20 @@ namespace TowerDefense
         public SimplePath simplePath;
         public Bullet bullet;
         public List<Bullet> bulletList = new List<Bullet>();
+        public Texture2D shooterTex = Assets.ball;
+        Texture2D minerTex;
+
+        enum TowerType
+        {
+            shooter,
+            miner
+        }
+        TowerType towerType;
 
         double frameTimer, frameInterval = 2000;
-        public Tower(Texture2D tex, Vector2 pos, Rectangle hitBox, SimplePath simplePath) : base(tex)
+        public Tower(Vector2 pos, Rectangle hitBox, SimplePath simplePath) : base()
         {
-            this.tex = tex;
+            
             this.pos = pos;
             this.hitBox = hitBox;
             this.simplePath = simplePath;
@@ -31,7 +40,7 @@ namespace TowerDefense
 
         public override void Update(GameTime gameTime)
         {
-            hitBox = new Rectangle((int)pos.X, (int)pos.Y, tex.Width, tex.Height);
+            hitBox = new Rectangle((int)pos.X, (int)pos.Y, shooterTex.Width, shooterTex.Height);
             if (!placed)
             {
                 pos = Game1.mousePos.ToVector2();
@@ -42,7 +51,7 @@ namespace TowerDefense
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, pos, Color.White);
+            spriteBatch.Draw(shooterTex, pos, Color.White);
             foreach (Bullet bullet in bulletList)
             {
                 bullet.Draw(spriteBatch);
@@ -78,7 +87,7 @@ namespace TowerDefense
             if (frameTimer <= 0)
             {
                 frameTimer = frameInterval;
-                bulletList.Add(bullet = new Bullet(tex, pos, hitBox, simplePath, enemyPos));
+                bulletList.Add(bullet = new Bullet(pos, hitBox, simplePath, enemyPos));
             }
         }
 

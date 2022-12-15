@@ -23,9 +23,6 @@ namespace TowerDefense
 
         RenderTarget2D renderTarget;
 
-        Texture2D backgroundTexture;
-        Texture2D ball;
-
         //Particles
         ParticleSystem particleSystem;
         List<Texture2D> textures = new List<Texture2D>();
@@ -41,7 +38,6 @@ namespace TowerDefense
         //Tower
         List<Tower> TowerList = new List<Tower>();
         Tower tower;
-        Texture2D towerTex;
 
         //Mouse & Keyboard
         KeyboardState ks;
@@ -60,7 +56,7 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
-
+            Assets.LoadTextures(Content);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch1 = new SpriteBatch(GraphicsDevice);
 
@@ -78,9 +74,6 @@ namespace TowerDefense
             textures.Add(Content.Load<Texture2D>("star"));
             textures.Add(Content.Load<Texture2D>("diamond"));
             particleSystem = new ParticleSystem(textures, new Vector2(400, 240));
-            ball = Content.Load<Texture2D>("ball");
-            backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");
-            towerTex = Content.Load<Texture2D>("Tower");
 
             enemyPosF = simplePath.beginT;
 
@@ -99,7 +92,7 @@ namespace TowerDefense
             timer -= gameTime.ElapsedGameTime.TotalSeconds;
             if (timer <= 0)
             {
-                enemyList.Add(new Enemy(ball, simplePath));
+                enemyList.Add(new Enemy(simplePath));
                 timer = timerInterval;
             }
 
@@ -116,7 +109,7 @@ namespace TowerDefense
             }
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                tower = new Tower(ball, new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, ball.Width, ball.Height), simplePath);
+                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath);
                 if (CanPlace(tower))
                 {
                     TowerList.Add(tower);
@@ -144,7 +137,7 @@ namespace TowerDefense
             DrawOnRenderTarget();
             particleSystem.Draw(spriteBatch);
 
-            spriteBatch.Draw(renderTarget, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
+            //spriteBatch.Draw(renderTarget, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
 
             GraphicsDevice.Clear(Color.White);
             levelManager.Draw(spriteBatch);
@@ -176,7 +169,7 @@ namespace TowerDefense
             }
             
 
-            spriteBatch1.Draw(backgroundTexture, Vector2.Zero, Color.White);
+            spriteBatch1.Draw(Assets.backgroundTexture, Vector2.Zero, Color.White);
             spriteBatch1.End();
 
 
@@ -185,9 +178,9 @@ namespace TowerDefense
 
         public bool CanPlace(Tower g)
         {
-            Color[] pixels = new Color[g.tex.Width * g.tex.Height];
-            Color[] pixels2 = new Color[g.tex.Width * g.tex.Height];
-            g.tex.GetData<Color>(pixels2);
+            Color[] pixels = new Color[g.shooterTex.Width * g.shooterTex.Height];
+            Color[] pixels2 = new Color[g.shooterTex.Width * g.shooterTex.Height];
+            g.shooterTex.GetData<Color>(pixels2);
             renderTarget.GetData(0, g.hitBox, pixels, 0, pixels.Length);
 
             for (int i = 0; i < pixels.Length; i++)

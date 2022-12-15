@@ -15,10 +15,11 @@ namespace TowerDefense
         SimplePath simplePath;
         public Rectangle hitBox2;
         public bool alive = true;
+        Texture2D tex = Assets.ball;
 
-        public Enemy(Texture2D tex, SimplePath simplePath) : base(tex)
+        public Enemy(SimplePath simplePath) : base()
         {
-            this.tex = tex;
+            
             this.simplePath = simplePath;
             hitBox2 = new Rectangle(0, 0, tex.Width, tex.Height);
         }
