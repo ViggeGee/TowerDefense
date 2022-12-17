@@ -12,6 +12,8 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch, spriteBatch1;
+       
+
 
         //Level
         LevelManager levelManager;
@@ -109,13 +111,21 @@ namespace TowerDefense
             }
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath);
+                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.shooter);
                 if (CanPlace(tower))
                 {
                     TowerList.Add(tower);
                 }
-
             }
+            if (mouseState.RightButton == ButtonState.Pressed)
+            {
+                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.miner);
+                if (CanPlace(tower))
+                {
+                    TowerList.Add(tower);
+                }
+            }
+
             foreach (Tower go in TowerList)
             {
                 go.placed = true;
@@ -154,6 +164,7 @@ namespace TowerDefense
                 obj.Draw(spriteBatch);
             }
 
+            Currency.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -182,6 +193,7 @@ namespace TowerDefense
             Color[] pixels2 = new Color[g.shooterTex.Width * g.shooterTex.Height];
             g.shooterTex.GetData<Color>(pixels2);
             renderTarget.GetData(0, g.hitBox, pixels, 0, pixels.Length);
+            
 
             for (int i = 0; i < pixels.Length; i++)
             {

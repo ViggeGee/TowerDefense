@@ -19,7 +19,7 @@ namespace TowerDefense
         float enemyPos;
         Vector2 speed = new Vector2(3, 3);
         Texture2D tex = Assets.ball;
-        public Bullet(Vector2 pos, Rectangle hitBox, SimplePath simplePath, float enemyPos) : base(pos, hitBox, simplePath)
+        public Bullet(Vector2 pos, Rectangle hitBox, SimplePath simplePath, float enemyPos, TowerType towerType) : base(pos, hitBox, simplePath, towerType)
         {
             this.pos = pos;
             this.enemyPos = enemyPos;

@@ -20,19 +20,20 @@ namespace TowerDefense
         public Bullet bullet;
         public List<Bullet> bulletList = new List<Bullet>();
         public Texture2D shooterTex = Assets.ball;
-        Texture2D minerTex;
+        Texture2D minerTex = Assets.square;
 
-        enum TowerType
+       public enum TowerType
         {
             shooter,
             miner
         }
         TowerType towerType;
 
-        double frameTimer, frameInterval = 2000;
-        public Tower(Vector2 pos, Rectangle hitBox, SimplePath simplePath) : base()
+        double shooterFrameTimer, shooterFrameInterval = 2000;
+        double minerFrameTimer, minerFrameInterval = 10000;
+        public Tower(Vector2 pos, Rectangle hitBox, SimplePath simplePath, TowerType towerType) : base()
         {
-            
+            this.towerType = towerType;
             this.pos = pos;
             this.hitBox = hitBox;
             this.simplePath = simplePath;
@@ -45,25 +46,33 @@ namespace TowerDefense
             {
                 pos = Game1.mousePos.ToVector2();
             }
-            Shooter(gameTime);
-            
+            if (towerType == TowerType.shooter)
+                Shooter(gameTime);
+            if (towerType == TowerType.miner)
+                Miner(gameTime);
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(shooterTex, pos, Color.White);
-            foreach (Bullet bullet in bulletList)
+            if (towerType == TowerType.shooter)
             {
-                bullet.Draw(spriteBatch);
+                spriteBatch.Draw(shooterTex, pos, Color.White);
+                foreach (Bullet bullet in bulletList)
+                {
+                    bullet.Draw(spriteBatch);
+                }
             }
+            if (towerType == TowerType.miner)
+                spriteBatch.Draw(minerTex, pos, Color.White);
         }
 
         public void Shooter(GameTime gameTime)
         {
             if (placed)
             {
-                if(towerEnemyList.Count != 0)
-                enemyPos = towerEnemyList.First().GetFloatPos();
+                if (towerEnemyList.Count != 0)
+                    enemyPos = towerEnemyList.First().GetFloatPos();
 
                 foreach (Enemy enemy in towerEnemyList)
                 {
@@ -79,15 +88,25 @@ namespace TowerDefense
                 }
             }
 
-            frameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            shooterFrameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
             foreach (Bullet bullet in bulletList)
             {
                 bullet.Update();
             }
-            if (frameTimer <= 0)
+            if (shooterFrameTimer <= 0)
             {
-                frameTimer = frameInterval;
-                bulletList.Add(bullet = new Bullet(pos, hitBox, simplePath, enemyPos));
+                shooterFrameTimer = shooterFrameInterval;
+                bulletList.Add(bullet = new Bullet(pos, hitBox, simplePath, enemyPos, TowerType.shooter));
+            }
+        }
+
+        public void Miner(GameTime gameTime)
+        {
+            minerFrameTimer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            if(minerFrameTimer <= 0)
+            {
+                minerFrameTimer = minerFrameInterval;
+                Currency.currency = Currency.currency + 10;
             }
         }
 
