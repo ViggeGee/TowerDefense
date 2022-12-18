@@ -29,7 +29,7 @@ namespace TowerDefense
         }
         TowerType towerType;
 
-        double shooterFrameTimer, shooterFrameInterval = 2000;
+        double shooterFrameTimer, shooterFrameInterval = 1000;
         double minerFrameTimer, minerFrameInterval = 10000;
         public Tower(Vector2 pos, Rectangle hitBox, SimplePath simplePath, TowerType towerType) : base()
         {
@@ -80,8 +80,8 @@ namespace TowerDefense
                     {
                         if (bullet.hitBox2.Intersects(enemy.hitBox2) && bullet.alive)
                         {
-
-                            enemy.alive = false;
+                            Currency.currency = Currency.currency + 5;
+                            enemy.level = enemy.level - 1;
                             bullet.alive = false;
                         }
                     }

@@ -15,6 +15,8 @@ namespace TowerDefense
         SimplePath simplePath;
         public Rectangle hitBox2;
         public bool alive = true;
+        public int level = 5;
+        float speed = 3f;
         Texture2D tex = Assets.ball;
 
         public Enemy(SimplePath simplePath) : base()
@@ -26,12 +28,17 @@ namespace TowerDefense
 
         public void Update()
         {
+            EnemyLevel();
+            if (level <= 0)
+            {
+                alive = false;
+            }
             if (!alive)
             {
                 return;
             }
                 hitBox2.Location = pos.ToPoint();
-                floatPos++;
+                floatPos += speed;
                 pos = simplePath.GetPos(floatPos);
 
             if(floatPos >= simplePath.endT)
@@ -49,6 +56,11 @@ namespace TowerDefense
         public float GetFloatPos()
         {
             return floatPos;
+        }
+
+        public void EnemyLevel()
+        {
+            speed = (speed + level) / speed;
         }
     }
 }
