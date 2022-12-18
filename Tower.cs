@@ -63,7 +63,7 @@ namespace TowerDefense
                     bullet.Draw(spriteBatch);
                 }
             }
-            if (towerType == TowerType.miner)
+            else if (towerType == TowerType.miner)
                 spriteBatch.Draw(minerTex, pos, Color.White);
         }
 

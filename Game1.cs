@@ -112,17 +112,19 @@ namespace TowerDefense
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.shooter);
-                if (CanPlace(tower))
+                if (CanPlace(tower) && Currency.currency >= 50)
                 {
                     TowerList.Add(tower);
+                    Currency.currency = Currency.currency - 50;
                 }
             }
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.miner);
-                if (CanPlace(tower))
+                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.square.Width, Assets.square.Height), simplePath, Tower.TowerType.miner);
+                if (CanPlace(tower) && Currency.currency >= 70)
                 {
                     TowerList.Add(tower);
+                    Currency.currency = Currency.currency - 70;
                 }
             }
 
