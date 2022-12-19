@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct3D9;
 using Spline;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -17,6 +18,7 @@ namespace TowerDefense
         enum GameState
         {
             start,
+            build,
             run,
             paused,
             win,
@@ -45,6 +47,8 @@ namespace TowerDefense
         double timer = 0;
         double timerInterval = 2;
         float enemyPosF;
+        int enemyCounter = 0;
+
 
         //Tower
         List<Tower> TowerList = new List<Tower>();
@@ -68,6 +72,8 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
+
+
             Assets.LoadTextures(Content);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch1 = new SpriteBatch(GraphicsDevice);
@@ -96,7 +102,7 @@ namespace TowerDefense
         {
             mouseState = Mouse.GetState();
             mousePos = new Point(mouseState.X, mouseState.Y);
-
+            levelManager.Update();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -108,32 +114,25 @@ namespace TowerDefense
                         particleSystem.EmitterLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
                         particleSystem.Update();
                         if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-                            gameState = GameState.run;
+                            gameState = GameState.build;
 
+                        break;
+                    }
+                case GameState.build:
+                    {
+                        TowerPlacer();
+                        if (Keyboard.GetState().IsKeyDown(Keys.A))
+                            gameState = GameState.run;
                         break;
                     }
                 case GameState.run:
                     {
-                        //EnemySpawner
-                        timer -= gameTime.ElapsedGameTime.TotalSeconds;
-                        if (timer <= 0)
-                        {
-                            enemyList.Add(new Enemy(simplePath));
-                            timer = timerInterval;
-                        }
-
-                        foreach (Enemy enemy in enemyList)
-                        {
-                            enemy.Update();
-
-                        }
-
                         //TowerPlacer
                         foreach (Tower go in TowerList)
                         {
                             go.Update(gameTime);
                         }
-                        TowerPlacer();
+                       
 
                         //Shooter
                         enemyList.RemoveAll(x => x.alive == false);
@@ -141,6 +140,35 @@ namespace TowerDefense
                         {
                             tower.GetList(enemyList);
                         }
+
+                        //EnemySpawner                  TODO: add into Method
+                        if (enemyCounter <= levelManager.numberOfEnemies)
+                        {
+                            timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                            if (timer <= 0)
+                            {
+                                enemyList.Add(new Enemy(simplePath, levelManager.levelOfEnemies));
+                                timer = timerInterval;
+                                enemyCounter++;
+                            }
+                        }
+                        else if (enemyCounter >= levelManager.numberOfEnemies && enemyList.Count == 0)
+                        {
+                            gameState = GameState.build;
+                            enemyCounter = 0;
+                            foreach (Tower tower in TowerList)
+                            {
+                            tower.bulletList.Clear();
+                            }
+                            enemyList.Clear();
+                            levelManager.waveCounter++;
+                        }
+
+                        foreach (Enemy enemy in enemyList)
+                        {
+                            enemy.Update();
+                        }
+
 
                         break;
                     }
@@ -164,6 +192,24 @@ namespace TowerDefense
                 case GameState.start:
                     {
                         particleSystem.Draw(spriteBatch);
+                        break;
+                    }
+                case GameState.build:
+                    {
+                        levelManager.Draw(spriteBatch);
+
+                        foreach (Enemy enemy in enemyList)
+                        {
+                            enemy.Draw(spriteBatch);
+                        }
+
+
+
+                        foreach (Tower obj in TowerList)
+                        {
+                            obj.Draw(spriteBatch);
+                        }
+                        Stats.Draw(spriteBatch);
                         break;
                     }
                 case GameState.run:

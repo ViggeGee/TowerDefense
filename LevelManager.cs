@@ -13,6 +13,19 @@ namespace TowerDefense
     internal class LevelManager
     {
         SimplePath simplePath;
+
+        public enum Waves
+        {
+            wave1,
+            wave2,
+            wave3,
+            wave4,
+            wave5
+        }
+        public Waves wave;
+        public int numberOfEnemies;
+        public int levelOfEnemies;
+        public int waveCounter = 1;
         public LevelManager(SimplePath simplePath)
         {
             this.simplePath = simplePath;
@@ -20,6 +33,9 @@ namespace TowerDefense
 
         public void Load()
         {
+            Update();
+
+
             //Level 1
             simplePath.Clean();
 
@@ -36,10 +52,44 @@ namespace TowerDefense
             simplePath.SetPos(0, Vector2.Zero);
         }
 
+        public void Update()
+        {
+            WaveSelector();
+            switch (wave)
+            {
+                case Waves.wave1:
+                    {
+                        numberOfEnemies = 10;
+                        levelOfEnemies = 2;
+                        break;
+                    }
+                case Waves.wave2:
+                    {
+                        numberOfEnemies = 2;
+                        levelOfEnemies = 5;
+                        break;
+                    }
+
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             simplePath.DrawPoints(spriteBatch);
             simplePath.Draw(spriteBatch);
         }
+
+        public void WaveSelector()
+        {
+            if (waveCounter == 1)
+            {
+                wave = Waves.wave1;
+            }
+            if (waveCounter == 2)
+            {
+                wave = Waves.wave2;
+            }
+        }
+
     }
 }

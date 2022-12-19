@@ -19,9 +19,9 @@ namespace TowerDefense
         float speed = 2f;
         Texture2D tex = Assets.ball;
 
-        public Enemy(SimplePath simplePath) : base()
+        public Enemy(SimplePath simplePath, int level) : base()
         {
-            
+            this.level = level;
             this.simplePath = simplePath;
             hitBox2 = new Rectangle(0, 0, tex.Width, tex.Height);
         }
