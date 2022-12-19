@@ -80,7 +80,7 @@ namespace TowerDefense
                     {
                         if (bullet.hitBox2.Intersects(enemy.hitBox2) && bullet.alive)
                         {
-                            Currency.currency = Currency.currency + 5;
+                            Stats.currency = Stats.currency + 5;
                             enemy.level = enemy.level - 1;
                             bullet.alive = false;
                         }
@@ -106,7 +106,7 @@ namespace TowerDefense
             if(minerFrameTimer <= 0)
             {
                 minerFrameTimer = minerFrameInterval;
-                Currency.currency = Currency.currency + 10;
+                Stats.currency = Stats.currency + 10;
             }
         }
 

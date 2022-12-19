@@ -12,8 +12,17 @@ namespace TowerDefense
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch, spriteBatch1;
-       
 
+        //GameState
+        enum GameState
+        {
+            start,
+            run,
+            paused,
+            win,
+            over
+        }
+        GameState gameState;
 
         //Level
         LevelManager levelManager;
@@ -42,6 +51,7 @@ namespace TowerDefense
         Tower tower;
 
         //Mouse & Keyboard
+        MouseState mouseState;
         KeyboardState ks;
         public static Point mousePos;
         public Game1()
@@ -84,62 +94,62 @@ namespace TowerDefense
 
         protected override void Update(GameTime gameTime)
         {
-            MouseState mouseState = Mouse.GetState();
+            mouseState = Mouse.GetState();
             mousePos = new Point(mouseState.X, mouseState.Y);
-            particleSystem.EmitterLocation =  new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            particleSystem.Update();
+
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            //EnemySpawner
-            timer -= gameTime.ElapsedGameTime.TotalSeconds;
-            if (timer <= 0)
-            {
-                enemyList.Add(new Enemy(simplePath));
-                timer = timerInterval;
-            }
 
-            foreach (Enemy enemy in enemyList)
+            switch (gameState)
             {
-                enemy.Update();
+                case GameState.start:
+                    {
+                        particleSystem.EmitterLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+                        particleSystem.Update();
+                        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                            gameState = GameState.run;
 
-            }
+                        break;
+                    }
+                case GameState.run:
+                    {
+                        //EnemySpawner
+                        timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                        if (timer <= 0)
+                        {
+                            enemyList.Add(new Enemy(simplePath));
+                            timer = timerInterval;
+                        }
 
-            //TowerPlacer
-            foreach (Tower go in TowerList)
-            {
-                go.Update(gameTime);
-            }
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.shooter);
-                if (CanPlace(tower) && Currency.currency >= 50)
-                {
-                    TowerList.Add(tower);
-                    Currency.currency = Currency.currency - 50;
-                }
-            }
-            if (mouseState.RightButton == ButtonState.Pressed)
-            {
-                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.square.Width, Assets.square.Height), simplePath, Tower.TowerType.miner);
-                if (CanPlace(tower) && Currency.currency >= 70)
-                {
-                    TowerList.Add(tower);
-                    Currency.currency = Currency.currency - 70;
-                }
-            }
+                        foreach (Enemy enemy in enemyList)
+                        {
+                            enemy.Update();
 
-            foreach (Tower go in TowerList)
-            {
-                go.placed = true;
-            }
+                        }
 
-            //Shooter
-            enemyList.RemoveAll(x => x.alive == false);
-            foreach(Tower tower in TowerList)
-            {
-                tower.GetList(enemyList);
-            }
+                        //TowerPlacer
+                        foreach (Tower go in TowerList)
+                        {
+                            go.Update(gameTime);
+                        }
+                        TowerPlacer();
 
+                        //Shooter
+                        enemyList.RemoveAll(x => x.alive == false);
+                        foreach (Tower tower in TowerList)
+                        {
+                            tower.GetList(enemyList);
+                        }
+
+                        break;
+                    }
+                case GameState.over:
+                    {
+
+                        break;
+                    }
+            }
             base.Update(gameTime);
         }
 
@@ -147,26 +157,36 @@ namespace TowerDefense
         {
             spriteBatch.Begin();
             DrawOnRenderTarget();
-            particleSystem.Draw(spriteBatch);
+            GraphicsDevice.Clear(Color.DimGray);
 
-            //spriteBatch.Draw(renderTarget, new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0f);
-
-            GraphicsDevice.Clear(Color.White);
-            levelManager.Draw(spriteBatch);
-
-            foreach (Enemy enemy in enemyList)
+            switch (gameState)
             {
-                enemy.Draw(spriteBatch);
+                case GameState.start:
+                    {
+                        particleSystem.Draw(spriteBatch);
+                        break;
+                    }
+                case GameState.run:
+                    {
+                        levelManager.Draw(spriteBatch);
+
+                        foreach (Enemy enemy in enemyList)
+                        {
+                            enemy.Draw(spriteBatch);
+                        }
+
+
+
+                        foreach (Tower obj in TowerList)
+                        {
+                            obj.Draw(spriteBatch);
+                        }
+                        Stats.Draw(spriteBatch);
+
+                        break;
+                    }
             }
 
-
-
-            foreach (Tower obj in TowerList)
-            {
-                obj.Draw(spriteBatch);
-            }
-
-            Currency.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -180,7 +200,7 @@ namespace TowerDefense
             {
                 obj.Draw(spriteBatch1);
             }
-            
+
 
             spriteBatch1.Draw(Assets.backgroundTexture, Vector2.Zero, Color.White);
             spriteBatch1.End();
@@ -195,13 +215,40 @@ namespace TowerDefense
             Color[] pixels2 = new Color[g.shooterTex.Width * g.shooterTex.Height];
             g.shooterTex.GetData<Color>(pixels2);
             renderTarget.GetData(0, g.hitBox, pixels, 0, pixels.Length);
-            
+
 
             for (int i = 0; i < pixels.Length; i++)
             {
                 if (pixels[i].A > 0.0f && pixels2[i].A > 0.0f) { return false; }
             }
             return true;
+        }
+
+        public void TowerPlacer()
+        {
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.shooter);
+                if (CanPlace(tower) && Stats.currency >= 50)
+                {
+                    TowerList.Add(tower);
+                    Stats.currency = Stats.currency - 50;
+                }
+            }
+            if (mouseState.RightButton == ButtonState.Pressed)
+            {
+                tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.square.Width, Assets.square.Height), simplePath, Tower.TowerType.miner);
+                if (CanPlace(tower) && Stats.currency >= 70)
+                {
+                    TowerList.Add(tower);
+                    Stats.currency = Stats.currency - 70;
+                }
+            }
+
+            foreach (Tower go in TowerList)
+            {
+                go.placed = true;
+            }
         }
     }
 }

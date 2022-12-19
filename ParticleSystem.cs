@@ -43,7 +43,7 @@ namespace TowerDefense
 
         public void Update()
         {
-            int total = 10;
+            int total = 1;
 
             for (int i = 0; i < total; i++)
             {
