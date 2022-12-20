@@ -42,7 +42,10 @@ namespace TowerDefense
                 pos = simplePath.GetPos(floatPos);
 
             if(floatPos >= simplePath.endT)
+            {
                 alive = false;
+                Stats.lives = Stats.lives - level;
+            }
 
         }
 

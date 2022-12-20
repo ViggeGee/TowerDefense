@@ -45,7 +45,7 @@ namespace TowerDefense
         Enemy enemy;
         public List<Enemy> enemyList = new List<Enemy>();
         double timer = 0;
-        double timerInterval = 2;
+        double timerInterval = 0.5;
         float enemyPosF;
         int enemyCounter = 0;
 
@@ -122,7 +122,9 @@ namespace TowerDefense
                     {
                         TowerPlacer();
                         if (Keyboard.GetState().IsKeyDown(Keys.A))
+                        {
                             gameState = GameState.run;
+                        }
                         break;
                     }
                 case GameState.run:
@@ -139,37 +141,18 @@ namespace TowerDefense
                         foreach (Tower tower in TowerList)
                         {
                             tower.GetList(enemyList);
-                        }
+                        }       
 
-                        //EnemySpawner                  TODO: add into Method
-                        if (enemyCounter <= levelManager.numberOfEnemies)
-                        {
-                            timer -= gameTime.ElapsedGameTime.TotalSeconds;
-                            if (timer <= 0)
-                            {
-                                enemyList.Add(new Enemy(simplePath, levelManager.levelOfEnemies));
-                                timer = timerInterval;
-                                enemyCounter++;
-                            }
-                        }
-                        else if (enemyCounter >= levelManager.numberOfEnemies && enemyList.Count == 0)
-                        {
-                            gameState = GameState.build;
-                            enemyCounter = 0;
-                            foreach (Tower tower in TowerList)
-                            {
-                            tower.bulletList.Clear();
-                            }
-                            enemyList.Clear();
-                            levelManager.waveCounter++;
-                        }
+                        EnemySpawner(gameTime);
+                        WaveReset();
 
                         foreach (Enemy enemy in enemyList)
                         {
                             enemy.Update();
                         }
 
-
+                        if (Stats.lives <= 0)
+                            gameState = GameState.over;
                         break;
                     }
                 case GameState.over:
@@ -220,8 +203,7 @@ namespace TowerDefense
                         {
                             enemy.Draw(spriteBatch);
                         }
-
-
+                        
 
                         foreach (Tower obj in TowerList)
                         {
@@ -231,8 +213,19 @@ namespace TowerDefense
 
                         break;
                     }
+                case GameState.over:
+                    {
+                        spriteBatch.DrawString(Assets.spriteFont, "Game Over", new Vector2(200, 200), Color.Red, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
+                        break;
+                    }
+                case GameState.win:
+                    {
+                        spriteBatch.DrawString(Assets.spriteFont, "You Win", new Vector2(200, 200), Color.Yellow, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
+                        break;
+                    }
+                
             }
-
+            
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -294,6 +287,35 @@ namespace TowerDefense
             foreach (Tower go in TowerList)
             {
                 go.placed = true;
+            }
+        }
+        public void EnemySpawner(GameTime gameTime)
+        {
+            if (enemyCounter <= levelManager.numberOfEnemies)
+            {
+                timer -= gameTime.ElapsedGameTime.TotalSeconds;
+                if (timer <= 0)
+                {
+                    enemyList.Add(new Enemy(simplePath, levelManager.levelOfEnemies));
+                    timer = timerInterval;
+                    enemyCounter++;
+                }
+            }
+        }
+        public void WaveReset()
+        {
+            if (enemyCounter >= levelManager.numberOfEnemies && enemyList.Count == 0)
+            {
+                gameState = GameState.build;
+                enemyCounter = 0;
+                foreach (Tower tower in TowerList)
+                {
+                    tower.bulletList.Clear();
+                }
+                enemyList.Clear();
+                levelManager.waveCounter++;
+                if (levelManager.waveCounter >= 6)
+                    gameState = GameState.win;
             }
         }
     }

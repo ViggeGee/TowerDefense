@@ -22,6 +22,7 @@ namespace TowerDefense
         {
             spriteBatch.DrawString(spriteFont, "Currency: " + currency,currencyPos , Color.Black);
             spriteBatch.DrawString(spriteFont, "Lives: " + lives, livesPos, Color.Black);
+            
         }
 
     }
