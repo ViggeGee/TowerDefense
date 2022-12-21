@@ -13,10 +13,10 @@ namespace TowerDefense
         public static SpriteFont spriteFont = Assets.spriteFont;
         
         public static int currency = 200;
-        public static Vector2 currencyPos = new Vector2(700, 0);
+        public static Vector2 currencyPos = new Vector2(600, 0);
         
         public static int lives = 5;
-        public static Vector2 livesPos = new Vector2(50, 0);
+        public static Vector2 livesPos = new Vector2(0, 0);
 
         public static void Draw(SpriteBatch spriteBatch)
         {

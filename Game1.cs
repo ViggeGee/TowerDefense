@@ -15,12 +15,12 @@ namespace TowerDefense
         private SpriteBatch spriteBatch, spriteBatch1;
 
         //GameState
+        bool paused;
         enum GameState
         {
             start,
             build,
             run,
-            paused,
             win,
             over
         }
@@ -29,6 +29,7 @@ namespace TowerDefense
         //Level
         LevelManager levelManager;
         SimplePath simplePath;
+        
 
         int width = 850;
         int height = 650;
@@ -72,7 +73,7 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
-
+            simple
 
             Assets.LoadTextures(Content);
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -100,12 +101,20 @@ namespace TowerDefense
 
         protected override void Update(GameTime gameTime)
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !paused)
+                paused = true;
+            else if (Keyboard.GetState().IsKeyDown(Keys.Space) && paused)
+                paused = false;
+
             mouseState = Mouse.GetState();
             mousePos = new Point(mouseState.X, mouseState.Y);
             levelManager.Update();
 
+            if (paused)
+                return;
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
 
             switch (gameState)
             {
@@ -134,14 +143,14 @@ namespace TowerDefense
                         {
                             go.Update(gameTime);
                         }
-                       
+
 
                         //Shooter
                         enemyList.RemoveAll(x => x.alive == false);
                         foreach (Tower tower in TowerList)
                         {
                             tower.GetList(enemyList);
-                        }       
+                        }
 
                         EnemySpawner(gameTime);
                         WaveReset();
@@ -153,11 +162,6 @@ namespace TowerDefense
 
                         if (Stats.lives <= 0)
                             gameState = GameState.over;
-                        break;
-                    }
-                case GameState.over:
-                    {
-
                         break;
                     }
             }
@@ -186,8 +190,6 @@ namespace TowerDefense
                             enemy.Draw(spriteBatch);
                         }
 
-
-
                         foreach (Tower obj in TowerList)
                         {
                             obj.Draw(spriteBatch);
@@ -203,7 +205,7 @@ namespace TowerDefense
                         {
                             enemy.Draw(spriteBatch);
                         }
-                        
+
 
                         foreach (Tower obj in TowerList)
                         {
@@ -215,17 +217,19 @@ namespace TowerDefense
                     }
                 case GameState.over:
                     {
-                        spriteBatch.DrawString(Assets.spriteFont, "Game Over", new Vector2(200, 200), Color.Red, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
+                        spriteBatch.DrawString(Assets.spriteFont, "Game Over", new Vector2(50, 200), Color.Red, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
                         break;
                     }
                 case GameState.win:
                     {
-                        spriteBatch.DrawString(Assets.spriteFont, "You Win", new Vector2(200, 200), Color.Yellow, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
+                        spriteBatch.DrawString(Assets.spriteFont, "You Win", new Vector2(50, 200), Color.Yellow, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
                         break;
                     }
-                
+
             }
-            
+
+            if (paused)
+                spriteBatch.DrawString(Assets.spriteFont, "Game Paused", new Vector2(50, 200), Color.Orange, 0, Vector2.Zero, 5, SpriteEffects.None, 0);
             spriteBatch.End();
             base.Draw(gameTime);
         }
