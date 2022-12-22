@@ -83,6 +83,7 @@ namespace TowerDefense
                             Stats.currency = Stats.currency + 5;
                             enemy.level = enemy.level - 1;
                             bullet.alive = false;
+
                         }
                     }
                 }

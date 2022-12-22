@@ -12,6 +12,9 @@ namespace TowerDefense
     public class Bullet : Tower
 
     {
+        ParticleSystem particleSystem = new ParticleSystem(Assets.textures, new Vector2(400, 240));
+
+
         public Rectangle hitBox2;
         Vector2 direction;
         public bool alive = true;
@@ -31,7 +34,10 @@ namespace TowerDefense
             if (!alive) 
                 return;
 
-            if(Vector2.Distance(pos, enemyPosV) <= 3)
+            particleSystem.Update();
+            particleSystem.EmitterLocation = new Vector2(pos.X, pos.Y);
+
+            if (Vector2.Distance(pos, enemyPosV) <= 3)
             {
                 alive = false;
             }
@@ -51,6 +57,7 @@ namespace TowerDefense
         {
             if (alive)
             {
+                particleSystem.Draw(spriteBatch);
                 spriteBatch.Draw(tex, pos, null, Color.Blue, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
             }
         }

@@ -73,8 +73,7 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
-            simple
-
+            
             Assets.LoadTextures(Content);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch1 = new SpriteBatch(GraphicsDevice);
