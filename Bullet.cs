@@ -58,7 +58,7 @@ namespace TowerDefense
             if (alive)
             {
                 particleSystem.Draw(spriteBatch);
-                spriteBatch.Draw(tex, pos, null, Color.Blue, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
+                spriteBatch.Draw(tex, pos, null, Color.LightGoldenrodYellow, 0, Vector2.Zero, 0.1f, SpriteEffects.None, 0);
             }
         }
     }

@@ -31,10 +31,7 @@ namespace TowerDefense
                     1f * (float)(random.NextDouble() * 2 - 1));
             float angle = 0;
             float angularVelocity = 0.1f * (float)(random.NextDouble() * 2 - 1);
-            Color color = new Color(
-                    (float)random.NextDouble(),
-                    (float)random.NextDouble(),
-                    (float)random.NextDouble());
+            Color color = Color.DarkSlateGray;
             float size = (float)random.NextDouble();
             int ttl = 5 + random.Next(10);
 

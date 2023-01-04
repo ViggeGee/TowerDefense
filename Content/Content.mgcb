@@ -56,6 +56,12 @@
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont
 
+#begin Select_Item_03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Select_Item_03.wav
+
 #begin Square.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -79,6 +85,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:star.png
+
+#begin Tiny_Pop_06.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Tiny_Pop_06.wav
 
 #begin Tower.png
 /importer:TextureImporter

@@ -89,10 +89,7 @@ namespace TowerDefense
             renderTarget = new RenderTarget2D(GraphicsDevice, Window.ClientBounds.Width, Window.ClientBounds.Height);
 
 
-            textures.Add(Content.Load<Texture2D>("circle"));
-            textures.Add(Content.Load<Texture2D>("star"));
-            textures.Add(Content.Load<Texture2D>("diamond"));
-            particleSystem = new ParticleSystem(textures, new Vector2(400, 240));
+            particleSystem = new ParticleSystem(Assets.textures, new Vector2(400, 240));
 
             enemyPosF = simplePath.beginT;
 

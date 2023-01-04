@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Spline;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace TowerDefense
 {
@@ -83,6 +85,7 @@ namespace TowerDefense
                             Stats.currency = Stats.currency + 5;
                             enemy.level = enemy.level - 1;
                             bullet.alive = false;
+                            Assets.popAudio.Play(0.1f, 0f, 0f);
 
                         }
                     }
@@ -98,6 +101,7 @@ namespace TowerDefense
             {
                 shooterFrameTimer = shooterFrameInterval;
                 bulletList.Add(bullet = new Bullet(pos, hitBox, simplePath, enemyPos, TowerType.shooter));
+                Assets.shootAudio.Play(0.1f,0f,0f);
             }
         }
 
