@@ -29,7 +29,8 @@ namespace TowerDefense
         //Level
         LevelManager levelManager;
         SimplePath simplePath;
-        
+        Rectangle lvl1Rec;
+        Rectangle lvl2Rec;
 
         int width = 850;
         int height = 650;
@@ -73,14 +74,14 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
-            
+
             Assets.LoadTextures(Content);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch1 = new SpriteBatch(GraphicsDevice);
 
             simplePath = new SimplePath(GraphicsDevice);
             levelManager = new LevelManager(simplePath);
-            levelManager.Load();
+            //levelManager.Load();
             graphics.PreferredBackBufferHeight = height;
             graphics.PreferredBackBufferWidth = width;
             graphics.ApplyChanges();
@@ -121,8 +122,26 @@ namespace TowerDefense
                     {
                         particleSystem.EmitterLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
                         particleSystem.Update();
-                        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                        lvl1Rec = new Rectangle(200, 150, 200, 200);
+                        lvl2Rec = new Rectangle(500, 150, 200, 200);
+
+                            //Lvl1 true
+                        if (mouseState.RightButton == ButtonState.Pressed && lvl1Rec.Contains(mousePos))
+                        {
+                            levelManager.level1 = true;
+                            levelManager.Load();
                             gameState = GameState.build;
+                        }
+                            //Lvl2 true
+                        else if (mouseState.RightButton == ButtonState.Pressed && lvl2Rec.Contains(mousePos))
+                        {
+                            levelManager.level2 = true;
+                            levelManager.Load();
+                            gameState = GameState.build;
+                        }
+
+                        //if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                        //    gameState = GameState.build;
 
                         break;
                     }
@@ -177,6 +196,8 @@ namespace TowerDefense
             {
                 case GameState.start:
                     {
+                        spriteBatch.Draw(Assets.square, lvl1Rec, Color.Red);
+                        spriteBatch.Draw(Assets.square, lvl2Rec, Color.Blue);
                         particleSystem.Draw(spriteBatch);
                         break;
                     }
@@ -268,7 +289,7 @@ namespace TowerDefense
 
         public void TowerPlacer()
         {
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (Keyboard.GetState().IsKeyDown(Keys.Q))
             {
                 tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.ball.Width, Assets.ball.Height), simplePath, Tower.TowerType.shooter);
                 if (CanPlace(tower) && Stats.currency >= 50)
@@ -277,7 +298,7 @@ namespace TowerDefense
                     Stats.currency = Stats.currency - 50;
                 }
             }
-            if (mouseState.RightButton == ButtonState.Pressed)
+            if (Keyboard.GetState().IsKeyDown(Keys.E))
             {
                 tower = new Tower(new Vector2(mousePos.X, mousePos.Y), new Rectangle(mousePos.X, mousePos.Y, Assets.square.Width, Assets.square.Height), simplePath, Tower.TowerType.miner);
                 if (CanPlace(tower) && Stats.currency >= 70)

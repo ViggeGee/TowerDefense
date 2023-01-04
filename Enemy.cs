@@ -17,6 +17,7 @@ namespace TowerDefense
         public bool alive = true;
         public int level = 1;
         float speed = 2f;
+        Color color;
         Texture2D tex = Assets.ball;
 
         public Enemy(SimplePath simplePath, int level) : base()
@@ -28,6 +29,8 @@ namespace TowerDefense
 
         public void Update()
         {
+
+            ColorPicker();
             EnemyLevel();
             if (level <= 0)
             {
@@ -53,7 +56,7 @@ namespace TowerDefense
         {
             if (alive)
             {
-                spriteBatch.Draw(tex, hitBox2, Color.Red);
+                spriteBatch.Draw(tex, hitBox2, color);
             }
         }
         public float GetFloatPos()
@@ -64,6 +67,24 @@ namespace TowerDefense
         public void EnemyLevel()
         {
             speed = (speed + level) / 3;
+        }
+
+        public void ColorPicker()
+        {
+            if(level == 1)
+                color = Color.Red;
+            else if(level == 2)
+                color = Color.Blue;
+            else if(level == 3)
+                color = Color.Green;
+            else if(level == 4)
+                color = Color.Pink;
+            else if(level == 5)
+                color = Color.Purple;
+            else if (level == 6)
+                color = Color.RosyBrown;
+            else if (level == 7)
+                color = Color.Black;
         }
     }
 }

@@ -49,12 +49,12 @@
 /processorParam:TextureFormat=Color
 /build:diamond.png
 
-#begin spriteFont.spritefont
+#begin File.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:spriteFont.spritefont
+/build:File.spritefont
 
 #begin Square.png
 /importer:TextureImporter

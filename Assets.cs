@@ -15,7 +15,7 @@ namespace TowerDefense
         public static List<Texture2D> textures = new List<Texture2D>();
         public static void LoadTextures(ContentManager Content)
         {
-            spriteFont = Content.Load<SpriteFont>("spriteFont");
+            spriteFont = Content.Load<SpriteFont>("File");
             square = Content.Load<Texture2D>("Square");
             ball = Content.Load<Texture2D>("ball");
             backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");
