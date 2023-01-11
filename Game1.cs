@@ -14,6 +14,9 @@ namespace TowerDefense
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch, spriteBatch1;
 
+        //Forms
+        Form1 form1= new Form1();
+
         //GameState
         bool paused;
         enum GameState
@@ -27,6 +30,7 @@ namespace TowerDefense
         GameState gameState;
 
         //Level
+        public static Color backgroundColor = Color.White;
         LevelManager levelManager;
         SimplePath simplePath;
         Rectangle lvl1Rec;
@@ -74,6 +78,10 @@ namespace TowerDefense
 
         protected override void LoadContent()
         {
+            form1.Activate();
+            form1.Show();
+            //lvl1Rec = new Rectangle(200, 150, 200, 200);
+            //lvl2Rec = new Rectangle(500, 150, 200, 200);
 
             Assets.LoadTextures(Content);
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -81,7 +89,7 @@ namespace TowerDefense
 
             simplePath = new SimplePath(GraphicsDevice);
             levelManager = new LevelManager(simplePath);
-            //levelManager.Load();
+            levelManager.Load();
             graphics.PreferredBackBufferHeight = height;
             graphics.PreferredBackBufferWidth = width;
             graphics.ApplyChanges();
@@ -112,34 +120,16 @@ namespace TowerDefense
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
             switch (gameState)
             {
                 case GameState.start:
                     {
                         particleSystem.EmitterLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
                         particleSystem.Update();
-                        lvl1Rec = new Rectangle(200, 150, 200, 200);
-                        lvl2Rec = new Rectangle(500, 150, 200, 200);
 
-                            //Lvl1 true
-                        if (mouseState.RightButton == ButtonState.Pressed && lvl1Rec.Contains(mousePos))
-                        {
-                            levelManager.level1 = true;
-                            levelManager.Load();
-                            gameState = GameState.build;
-                        }
-                            //Lvl2 true
-                        else if (mouseState.RightButton == ButtonState.Pressed && lvl2Rec.Contains(mousePos))
-                        {
-                            levelManager.level2 = true;
-                            levelManager.Load();
-                            gameState = GameState.build;
-                        }
-
-                        //if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-                        //    gameState = GameState.build;
-
+                        levelManager.MapSelector(mouseState, mousePos);
+                        if(levelManager.mapSelected)
+                            gameState= GameState.build;
                         break;
                     }
                 case GameState.build:
@@ -187,21 +177,20 @@ namespace TowerDefense
         {
             spriteBatch.Begin();
             DrawOnRenderTarget();
-            GraphicsDevice.Clear(Color.DimGray);
-
+            GraphicsDevice.Clear(backgroundColor);
+            
+            
             switch (gameState)
             {
                 case GameState.start:
                     {
-                        spriteBatch.Draw(Assets.square, lvl1Rec, Color.Red);
-                        spriteBatch.Draw(Assets.square, lvl2Rec, Color.Blue);
+                        levelManager.DrawSquare(spriteBatch);
                         particleSystem.Draw(spriteBatch);
                         break;
                     }
                 case GameState.build:
                     {
                         levelManager.Draw(spriteBatch);
-
                         foreach (Enemy enemy in enemyList)
                         {
                             enemy.Draw(spriteBatch);

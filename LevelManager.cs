@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Spline;
 
 
@@ -13,7 +14,9 @@ namespace TowerDefense
     internal class LevelManager
     {
         SimplePath simplePath;
-
+        Rectangle lvl1Rec;
+        Rectangle lvl2Rec;
+        public bool mapSelected = false;
         public enum Waves
         {
             wave1,
@@ -32,8 +35,12 @@ namespace TowerDefense
         {
             this.simplePath = simplePath;
         }
-
         public void Load()
+        {
+            lvl1Rec = new Rectangle(200, 150, 200, 200);
+            lvl2Rec = new Rectangle(500, 150, 200, 200);
+        }
+        public void LoadLevel()
         {
             Update();
 
@@ -136,14 +143,36 @@ namespace TowerDefense
 
             }
         }
-
+        public void DrawSquare(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(Assets.square, lvl1Rec, Color.Red);
+            spriteBatch.Draw(Assets.square, lvl2Rec, Color.Blue);
+        }
         public void Draw(SpriteBatch spriteBatch)
         {
+            
+           
             simplePath.DrawPoints(spriteBatch);
             simplePath.Draw(spriteBatch);
             spriteBatch.DrawString(Assets.spriteFont, "Wave: " + waveCounter, new Vector2(130, 0), Color.Black);
+            
         }
 
+        public void MapSelector(MouseState mouseState, Point mousePos)
+        {
+            if (mouseState.RightButton == ButtonState.Pressed && lvl1Rec.Contains(mousePos))
+            {
+                level1 = true;
+                LoadLevel();
+                mapSelected= true;
+            }
+            //Lvl2 true
+            else if (mouseState.RightButton == ButtonState.Pressed && lvl2Rec.Contains(mousePos))
+            {
+                level2 = true;
+                LoadLevel();
+                mapSelected= true;
+            }
+        }
         public void WaveSelector()
         {
             if (waveCounter == 1)
