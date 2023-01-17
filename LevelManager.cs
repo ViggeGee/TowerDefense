@@ -25,8 +25,8 @@ namespace TowerDefense
             wave4,
             wave5
         }
-        public bool level1=false;
-        public bool level2=false; 
+        public bool level1 = false;
+        public bool level2 = false;
         public Waves wave;
         public int numberOfEnemies;
         public int levelOfEnemies;
@@ -37,8 +37,42 @@ namespace TowerDefense
         }
         public void Load()
         {
-            lvl1Rec = new Rectangle(200, 150, 200, 200);
-            lvl2Rec = new Rectangle(500, 150, 200, 200);
+            simplePath.Clean();
+
+            simplePath.AddPoint(new Vector2(0, 100));
+            simplePath.AddPoint(new Vector2(50, 100));
+            simplePath.AddPoint(new Vector2(100, 100));
+            simplePath.AddPoint(new Vector2(150, 100));
+            simplePath.AddPoint(new Vector2(200, 100));
+
+            simplePath.AddPoint(new Vector2(200, 150));
+            simplePath.AddPoint(new Vector2(200, 200));
+            simplePath.AddPoint(new Vector2(200, 250));
+            simplePath.AddPoint(new Vector2(200, 300));
+            simplePath.AddPoint(new Vector2(200, 350));
+
+            simplePath.AddPoint(new Vector2(250, 350));
+            simplePath.AddPoint(new Vector2(300, 350));
+            simplePath.AddPoint(new Vector2(350, 350));
+            simplePath.AddPoint(new Vector2(400, 350));
+            simplePath.AddPoint(new Vector2(450, 350));
+
+            simplePath.AddPoint(new Vector2(450, 300));
+            simplePath.AddPoint(new Vector2(450, 250));
+            simplePath.AddPoint(new Vector2(450, 200));
+            simplePath.AddPoint(new Vector2(450, 150));
+            simplePath.AddPoint(new Vector2(450, 100));
+
+            simplePath.AddPoint(new Vector2(500, 100));
+            simplePath.AddPoint(new Vector2(550, 100));
+
+            simplePath.AddPoint(new Vector2(550, 150));
+            simplePath.AddPoint(new Vector2(550, 400));
+            simplePath.AddPoint(new Vector2(550, 450));
+            simplePath.AddPoint(new Vector2(600, 450));
+            simplePath.AddPoint(new Vector2(850, 450));
+
+            simplePath.SetPos(0, new Vector2(0, 100));
         }
         public void LoadLevel()
         {
@@ -46,63 +80,63 @@ namespace TowerDefense
 
 
             //Level 1
-            if (level1)
-            {
-                simplePath.Clean();
+            //if (level1)
+            //{
+            //    simplePath.Clean();
 
-                simplePath.AddPoint(new Vector2(0, 0));
-                simplePath.AddPoint(new Vector2(100, 100));
-                simplePath.AddPoint(new Vector2(200, 200));
-                simplePath.AddPoint(new Vector2(300, 200));
-                simplePath.AddPoint(new Vector2(300, 400));
-                simplePath.AddPoint(new Vector2(500, 400));
-                simplePath.AddPoint(new Vector2(600, 500));
-                simplePath.AddPoint(new Vector2(700, 500));
-                simplePath.AddPoint(new Vector2(850, 500));
+            //    simplePath.AddPoint(new Vector2(0, 0));
+            //    simplePath.AddPoint(new Vector2(100, 100));
+            //    simplePath.AddPoint(new Vector2(200, 200));
+            //    simplePath.AddPoint(new Vector2(300, 200));
+            //    simplePath.AddPoint(new Vector2(300, 400));
+            //    simplePath.AddPoint(new Vector2(500, 400));
+            //    simplePath.AddPoint(new Vector2(600, 500));
+            //    simplePath.AddPoint(new Vector2(700, 500));
+            //    simplePath.AddPoint(new Vector2(850, 500));
 
-            simplePath.SetPos(0, Vector2.Zero);
-            }
+            //    simplePath.SetPos(0, Vector2.Zero);
+            //}
 
             //Level 2
-            if (level2)
-            {
-                simplePath.Clean();
+            //if (level2)
+            //{
+            //    simplePath.Clean();
 
-                simplePath.AddPoint(new Vector2(0, 100));
-                simplePath.AddPoint(new Vector2(50, 100));
-                simplePath.AddPoint(new Vector2(100, 100));
-                simplePath.AddPoint(new Vector2(150, 100));
-                simplePath.AddPoint(new Vector2(200, 100));
+            //    simplePath.AddPoint(new Vector2(0, 100));
+            //    simplePath.AddPoint(new Vector2(50, 100));
+            //    simplePath.AddPoint(new Vector2(100, 100));
+            //    simplePath.AddPoint(new Vector2(150, 100));
+            //    simplePath.AddPoint(new Vector2(200, 100));
 
-                simplePath.AddPoint(new Vector2(200, 150));
-                simplePath.AddPoint(new Vector2(200, 200));
-                simplePath.AddPoint(new Vector2(200, 250));
-                simplePath.AddPoint(new Vector2(200, 300));
-                simplePath.AddPoint(new Vector2(200, 350));
+            //    simplePath.AddPoint(new Vector2(200, 150));
+            //    simplePath.AddPoint(new Vector2(200, 200));
+            //    simplePath.AddPoint(new Vector2(200, 250));
+            //    simplePath.AddPoint(new Vector2(200, 300));
+            //    simplePath.AddPoint(new Vector2(200, 350));
 
-                simplePath.AddPoint(new Vector2(250, 350));
-                simplePath.AddPoint(new Vector2(300, 350));
-                simplePath.AddPoint(new Vector2(350, 350));
-                simplePath.AddPoint(new Vector2(400, 350));
-                simplePath.AddPoint(new Vector2(450, 350));
+            //    simplePath.AddPoint(new Vector2(250, 350));
+            //    simplePath.AddPoint(new Vector2(300, 350));
+            //    simplePath.AddPoint(new Vector2(350, 350));
+            //    simplePath.AddPoint(new Vector2(400, 350));
+            //    simplePath.AddPoint(new Vector2(450, 350));
 
-                simplePath.AddPoint(new Vector2(450, 300));
-                simplePath.AddPoint(new Vector2(450, 250));
-                simplePath.AddPoint(new Vector2(450, 200));
-                simplePath.AddPoint(new Vector2(450, 150));
-                simplePath.AddPoint(new Vector2(450, 100));
+            //    simplePath.AddPoint(new Vector2(450, 300));
+            //    simplePath.AddPoint(new Vector2(450, 250));
+            //    simplePath.AddPoint(new Vector2(450, 200));
+            //    simplePath.AddPoint(new Vector2(450, 150));
+            //    simplePath.AddPoint(new Vector2(450, 100));
 
-                simplePath.AddPoint(new Vector2(500, 100));
-                simplePath.AddPoint(new Vector2(550, 100));
+            //    simplePath.AddPoint(new Vector2(500, 100));
+            //    simplePath.AddPoint(new Vector2(550, 100));
 
-                simplePath.AddPoint(new Vector2(550, 150));
-                simplePath.AddPoint(new Vector2(550, 400));
-                simplePath.AddPoint(new Vector2(550, 450));
-                simplePath.AddPoint(new Vector2(600, 450));
-                simplePath.AddPoint(new Vector2(850, 450));
+            //    simplePath.AddPoint(new Vector2(550, 150));
+            //    simplePath.AddPoint(new Vector2(550, 400));
+            //    simplePath.AddPoint(new Vector2(550, 450));
+            //    simplePath.AddPoint(new Vector2(600, 450));
+            //    simplePath.AddPoint(new Vector2(850, 450));
 
-                simplePath.SetPos(0, new Vector2(0, 100));
-            }
+            //    simplePath.SetPos(0, new Vector2(0, 100));
+            //}
         }
 
         public void Update()
@@ -125,36 +159,38 @@ namespace TowerDefense
                 case Waves.wave3:
                     {
                         numberOfEnemies = 10;
-                        levelOfEnemies= 5;
+                        levelOfEnemies = 5;
                         break;
                     }
                 case Waves.wave4:
                     {
-                        numberOfEnemies= 30;
+                        numberOfEnemies = 30;
                         levelOfEnemies = 7;
                         break;
                     }
-                    case Waves.wave5:
+                case Waves.wave5:
                     {
-                        numberOfEnemies= 50;
-                        levelOfEnemies= 7;
+                        numberOfEnemies = 50;
+                        levelOfEnemies = 7;
                         break;
                     }
 
             }
         }
-        public void DrawSquare(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(Assets.square, lvl1Rec, Color.Red);
-            spriteBatch.Draw(Assets.square, lvl2Rec, Color.Blue);
+        public void DrawCircle(SpriteBatch spriteBatch)
+        {
+            spriteBatch.DrawString(Assets.spriteFont, "Choose Level", new Vector2(200, 100), Color.Black);
+            spriteBatch.Draw(Assets.ball, lvl1Rec, Color.Red);
+            spriteBatch.Draw(Assets.ball, lvl2Rec, Color.Blue);
         }
         public void Draw(SpriteBatch spriteBatch)
         {
+            //simplePath.DrawPoints(spriteBatch);
+            //simplePath.Draw(spriteBatch);
             
-           
-            simplePath.DrawPoints(spriteBatch);
-            simplePath.Draw(spriteBatch);
-            spriteBatch.DrawString(Assets.spriteFont, "Wave: " + waveCounter, new Vector2(130, 0), Color.Black);
-            
+                spriteBatch.Draw(Assets.map2, new Vector2(-30,-40), null, Color.White, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Assets.spriteFont, "Wave: " + waveCounter, new Vector2(200, 0), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+
         }
 
         public void MapSelector(MouseState mouseState, Point mousePos)
@@ -163,14 +199,14 @@ namespace TowerDefense
             {
                 level1 = true;
                 LoadLevel();
-                mapSelected= true;
+                mapSelected = true;
             }
             //Lvl2 true
             else if (mouseState.RightButton == ButtonState.Pressed && lvl2Rec.Contains(mousePos))
             {
                 level2 = true;
                 LoadLevel();
-                mapSelected= true;
+                mapSelected = true;
             }
         }
         public void WaveSelector()
@@ -191,7 +227,7 @@ namespace TowerDefense
             {
                 wave = Waves.wave4;
             }
-           else if (waveCounter == 5)
+            else if (waveCounter == 5)
             {
                 wave = Waves.wave5;
             }

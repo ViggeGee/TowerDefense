@@ -59,14 +59,14 @@ namespace TowerDefense
         {
             if (towerType == TowerType.shooter)
             {
-                spriteBatch.Draw(shooterTex, pos, Color.White);
+                spriteBatch.Draw(minerTex, pos, Color.Yellow);
                 foreach (Bullet bullet in bulletList)
                 {
                     bullet.Draw(spriteBatch);
                 }
             }
             else if (towerType == TowerType.miner)
-                spriteBatch.Draw(minerTex, pos, Color.White);
+                spriteBatch.Draw(minerTex, pos, Color.Green);
         }
 
         public void Shooter(GameTime gameTime)

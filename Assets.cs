@@ -12,13 +12,17 @@ namespace TowerDefense
 {
     static public class Assets
     {
-        public static Texture2D ball, square, backgroundTexture;
+        public static Texture2D ball, square, backgroundTexture, gridWhite, gridBlack, map2;
         public static SpriteFont spriteFont;
         public static List<Texture2D> textures = new List<Texture2D>();
         public static SoundEffect popAudio, shootAudio;
+        
         public static void LoadTextures(ContentManager Content)
         {
-            spriteFont = Content.Load<SpriteFont>("File");
+            map2 = Content.Load<Texture2D>("map2");
+            gridBlack = Content.Load<Texture2D>("BlackGrid");
+            gridWhite = Content.Load<Texture2D>("WhiteGrid");
+            spriteFont = Content.Load<SpriteFont>("spriteFontBig");
             square = Content.Load<Texture2D>("Square");
             ball = Content.Load<Texture2D>("ball");
             backgroundTexture = Content.Load<Texture2D>("transparentSquareBackground");

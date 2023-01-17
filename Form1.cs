@@ -31,12 +31,12 @@ namespace TowerDefense
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Game1.backgroundColor= Microsoft.Xna.Framework.Color.White;
+            Game1.backgroundTex = Assets.gridWhite;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Game1.backgroundColor = Microsoft.Xna.Framework.Color.DimGray;
+            Game1.backgroundTex = Assets.gridBlack;
         }
     }
 }

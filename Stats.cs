@@ -20,8 +20,8 @@ namespace TowerDefense
 
         public static void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(spriteFont, "Currency: " + currency,currencyPos , Color.Black);
-            spriteBatch.DrawString(spriteFont, "Lives: " + lives, livesPos, Color.Black);
+            spriteBatch.DrawString(spriteFont, "Currency: " + currency,currencyPos , Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(spriteFont, "Lives: " + lives, livesPos, Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
             
         }
 
